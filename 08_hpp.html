@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perhitungan HPP</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #25a18e 0%, #4cc9f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .site-header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .site-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .site-logo span {
+            color: #ffd166;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: clamp(20px, 4vw, 26px);
+        }
+
+        /* BAGIAN RUMUS PERHITUNGAN */
+        .rumus-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+        }
+
+        .rumus-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: clamp(14px, 2.5vw, 16px);
+        }
+
+        .rumus-item.total {
+            border-top: 2px solid #333;
+            font-weight: bold;
+            margin-top: 5px;
+            padding-top: 10px;
+        }
+
+        /* TABEL */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(12px, 2.5vw, 14px);
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f1f3f5;
+        }
+
+        .keterangan {
+            margin-top: 20px;
+            font-size: clamp(12px, 2.5vw, 13px);
+            color: #555;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        /* STYLE TOMBOL */
+        .btn-home {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #1e80ca;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+        .btn-home:hover { 
+            background-color: #ff3838; 
+        }
+        .btn-laba {
+            background-color: #fd7e14 !important;
+        }
+        .btn-laba:hover {
+            background-color: #e06a07 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-logo">Si <span>Labaku</span></div>
+    </header>
+
+<div class="container">
+    <a href="Beranda.html" class="btn-home">🏠Beranda</a>
+
+    <h2>Perhitungan HPP</h2>
+
+    <!-- BAGIAN RUMUS PERHITUNGAN -->
+    <div class="rumus-box">
+        <div class="rumus-item">
+            <span>Jumlah Persediaan Awal (Rp)</span>
+            <span id="valAwal">Rp 0</span>
+        </div>
+        <div class="rumus-item">
+            <span>Jumlah Pembelian Persediaan (Rp)</span>
+            <span id="valBeli">Rp 0</span>
+        </div>
+        <div class="rumus-item">
+            <span>Jumlah Persediaan Akhir (Rp)</span>
+            <span id="valAkhir">Rp 0</span>
+        </div>
+        <div class="rumus-item total">
+            <span>Harga Pokok Penjualan (HPP)</span>
+            <span id="valHPP">Rp 0</span>
+        </div>
+    </div>
+
+    <!-- BAGIAN PERSEDIAAN AWAL -->
+    <div class="form-section">
+        <div class="form-title">Data Persediaan Awal</div>
+        <div class="table-wrapper">
+            <table id="tblAwal">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Kuantitas</th>
+                        <th>Harga Beli/Unit</th>
+                        <th>Jumlah Harga Beli</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data akan muncul otomatis disini -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align:right;">TOTAL</td>
+                        <td id="totalAwal">Rp 0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- BAGIAN PEMBELIAN -->
+    <div class="form-section">
+        <div class="form-title">Data Pembelian Persediaan</div>
+        <div class="table-wrapper">
+            <table id="tblBeli">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Kuantitas</th>
+                        <th>Harga Beli/Unit</th>
+                        <th>Jumlah Harga Beli</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data akan muncul otomatis disini -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align:right;">TOTAL</td>
+                        <td id="totalBeli">Rp 0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- BAGIAN PERSEDIAAN AKHIR -->
+    <div class="form-section">
+        <div class="form-title">Data Persediaan Akhir</div>
+        <div class="table-wrapper">
+            <table id="tblAkhir">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Kuantitas</th>
+                        <th>Harga Beli/Unit</th>
+                        <th>Jumlah Harga Beli</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data akan muncul otomatis disini -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="4" style="text-align:right;">TOTAL</td>
+                        <td id="totalAkhir">Rp 0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="keterangan">
+            <p><strong>Keterangan:</strong></p>
+            <p><em>Data di tabel ini hanya tampilan hasil dari inputan sebelumnya, tidak dapat diedit.</em></p>
+        </div>
+
+        <!-- TOMBOL MENUJU BEBAN -->
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="beban.html" class="btn-home btn-laba">
+                ➡️ BEBAN
+            </a>
+        </div>
+
+    </div> <!-- Penutup Container -->
+
+<script>
+    // Format Rupiah
+    function formatRupiah(angka) {
+        if (!angka || angka === 0) return "Rp 0";
+        return "Rp " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Fungsi utama memuat data
+    function muatDataDanHitung() {
+        // Ambil data dari memori
+        const dataAwal = JSON.parse(localStorage.getItem('dataAwal')) || [];
+        const dataBeli = JSON.parse(localStorage.getItem('dataBeli')) || [];
+        const dataAkhir = JSON.parse(localStorage.getItem('dataAkhir')) || [];
+        
+        console.log("Data Awal:", dataAwal);
+        console.log("Data Beli:", dataBeli);
+        console.log("Data Akhir:", dataAkhir);
+
+        // === HITUNG ULANG TOTAL SECARA LANGSUNG ===
+        let totalAwal = 0;
+        let totalBeli = 0;
+        let totalAkhir = 0;
+
+        // === TAMPILKAN DI TABEL AWAL ===
+        let tbodyAwal = document.querySelector('#tblAwal tbody');
+        tbodyAwal.innerHTML = "";
+        dataAwal.forEach(item => {
+            if(item.nm && item.nm.trim() !== "") {
+                // PASTIKAN ANGKA NYA BENER, JANGAN SAMPAI NaN
+                let qty = parseFloat(item.qty) || 0;
+                let hb = parseFloat(item.hb) || 0;
+                let totalNilai = parseFloat(item.totalBeli) || (qty * hb);
+                
+                totalAwal += totalNilai;
+
+                let baris = tbodyAwal.insertRow();
+                baris.innerHTML = `
+                    <td>${item.tgl || '-'}</td>
+                    <td>${item.nm}</td>
+                    <td>${qty}</td>
+                    <td>${formatRupiah(hb)}</td>
+                    <td>${formatRupiah(totalNilai)}</td>
+                `;
+            }
+        });
+        document.getElementById('totalAwal').textContent = formatRupiah(totalAwal);
+        document.getElementById('valAwal').textContent = formatRupiah(totalAwal);
+
+        // === TAMPILKAN DI TABEL PEMBELIAN ===
+        let tbodyBeli = document.querySelector('#tblBeli tbody');
+        tbodyBeli.innerHTML = "";
+        dataBeli.forEach(item => {
+            if(item.nm && item.nm.trim() !== "") {
+                let qty = parseFloat(item.qty) || 0;
+                let hb = parseFloat(item.hb) || 0;
+                let totalNilai = parseFloat(item.totalBeli) || (qty * hb);
+                
+                totalBeli += totalNilai;
+
+                let baris = tbodyBeli.insertRow();
+                baris.innerHTML = `
+                    <td>${item.tgl || '-'}</td>
+                    <td>${item.nm}</td>
+                    <td>${qty}</td>
+                    <td>${formatRupiah(hb)}</td>
+                    <td>${formatRupiah(totalNilai)}</td>
+                `;
+            }
+        });
+        document.getElementById('totalBeli').textContent = formatRupiah(totalBeli);
+        document.getElementById('valBeli').textContent = formatRupiah(totalBeli);
+
+        // === TAMPILKAN DI TABEL AKHIR ===
+        let tbodyAkhir = document.querySelector('#tblAkhir tbody');
+        tbodyAkhir.innerHTML = "";
+        dataAkhir.forEach(item => {
+            if(item.nm && item.nm.trim() !== "") {
+                let qty = parseFloat(item.qty) || 0;
+                let hb = parseFloat(item.hb) || 0;
+                let totalNilai = parseFloat(item.totalBeli) || (qty * hb);
+                
+                totalAkhir += totalNilai;
+
+                let baris = tbodyAkhir.insertRow();
+                baris.innerHTML = `
+                    <td>${item.tgl || '-'}</td>
+                    <td>${item.nm}</td>
+                    <td>${qty}</td>
+                    <td>${formatRupiah(hb)}</td>
+                    <td>${formatRupiah(totalNilai)}</td>
+                `;
+            }
+        });
+        document.getElementById('totalAkhir').textContent = formatRupiah(totalAkhir);
+        document.getElementById('valAkhir').textContent = formatRupiah(totalAkhir);  
+
+        // === HITUNG HASIL HPP ===
+        let hpp = totalAwal + totalBeli - totalAkhir;
+        document.getElementById('valHPP').textContent = formatRupiah(hpp);
+        
+        // Simpan nilai HPP buat halaman Laba
+        localStorage.setItem('nilaiHPP', hpp);
+    }
+
+    // Jalankan fungsi saat halaman dibuka
+    window.onload = muatDataDanHitung;
+
+</script>
+
+</body>
+</html>

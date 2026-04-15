@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan Akun / Profil UMKM</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #25a18e 0%, #4cc9f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .site-header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .site-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .site-logo span {
+            color: #ffd166;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: clamp(22px, 5vw, 28px);
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex; /* Biar tombol sejajar */
+            gap: 10px; /* Jarak antar tombol */
+            flex-wrap: wrap; /* Biar kalau layar kecil tetap rapi */
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            color: #495057;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: clamp(14px, 3vw, 16px);
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: clamp(14px, 3vw, 16px);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-home {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #1e80ca;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: bold;
+        }
+        .btn-home:hover { 
+            background-color: #ff3838; 
+        }
+
+        /* STYLE KHUSUS TOMBOL RESET */
+        .btn-reset {
+            background-color: #dc3545; /* Merah */
+        }
+        .btn-reset:hover {
+            background-color: #c82333;
+        }
+
+        .btn-simpan {
+            background-color: #25a18e;
+        }
+        .btn-simpan:hover {
+            background-color: #1e8777;
+        }
+
+        .btn-laporan {
+            background-color: #007bff;
+        }
+        .btn-laporan:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Website -->
+    <header class="site-header">
+        <div class="site-logo">Si <span>Labaku</span></div>
+    </header>
+
+<div class="container">
+    <a href="Beranda.html" class="btn-home">🏠Beranda</a>
+
+    <h2>Pengaturan Akun UMKM</h2>
+
+    <div class="form-group">
+        <label>Nama UMKM</label>
+        <input type="text" id="nama" placeholder="Masukkan nama usaha Anda">
+    </div>
+
+    <div class="form-group">
+        <label>Alamat Lengkap</label>
+        <textarea id="alamat" rows="3" placeholder="Masukkan alamat lengkap usaha"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Nomor Telepon / WhatsApp</label>
+        <input type="text" id="telp" placeholder="Contoh: 0812-3456-7890">
+    </div>
+
+    <div class="form-group">
+        <label>Periode / Tanggal Laporan</label>
+        <input type="date" id="tanggal">
+    </div>
+
+    <div class="form-group">
+        <button class="btn-simpan" onclick="simpanData()">💾 Simpan Data</button>
+        <button class="btn-laporan" onclick="window.location.href='laporan_laba_rugi.html'">📄 Lihat Laporan</button>
+    </div>
+
+    <!-- GARIS PEMISAH -->
+    <hr style="margin: 30px 0; border: 1px solid #eee;">
+
+    <!-- BAGIAN RESET -->
+    <div class="form-group">
+        <h3 style="color: #dc3545; margin-bottom: 10px;">⚠️ Fitur Berbahaya</h3>
+        <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+            Menghapus SEMUA data transaksi, barang, dan laporan. Data tidak bisa dikembalikan.
+        </p>
+        <button class="btn-reset" onclick="resetAplikasi()">🔄 RESET SEMUA DATA APLIKASI</button>
+    </div>
+
+</div>
+
+<script>
+    // Saat halaman dibuka, cek apakah ada data lama, lalu tampilkan
+    window.onload = function() {
+        let dataAkun = JSON.parse(localStorage.getItem('dataAkun'));
+        if(dataAkun) {
+            document.getElementById('nama').value = dataAkun.nama || '';
+            document.getElementById('alamat').value = dataAkun.alamat || '';
+            document.getElementById('telp').value = dataAkun.telp || '';
+            document.getElementById('tanggal').value = dataAkun.tanggal || '';
+        }
+    }
+
+    // Fungsi simpan data ke localStorage
+    function simpanData() {
+        let data = {
+            nama: document.getElementById('nama').value,
+            alamat: document.getElementById('alamat').value,
+            telp: document.getElementById('telp').value,
+            tanggal: document.getElementById('tanggal').value
+        };
+
+        // Simpan sebagai JSON
+        localStorage.setItem('dataAkun', JSON.stringify(data));
+
+        alert("✅ Data akun berhasil disimpan!");
+    }
+
+    // === FUNGSI RESET SEMUA DATA (LOGIN TETAP ADA) ===
+    function resetAplikasi() {
+        if(confirm("⚠️ APAKAH ANDA YAKIN?\n\nSemua data barang, laporan, dan grafik akan dihapus.\nTAPI Username & Password TETAP ADA.\n\nKlik OK untuk melanjutkan.")) {
+            
+            // 1. SIMPAN DULU DATA YANG MAU DIHINDARI
+            let dataAkunSementara = JSON.parse(localStorage.getItem('dataAkun'));
+            let dataLoginSementara = JSON.parse(localStorage.getItem('dataLogin')); // <<< TAMBAH INI
+
+            // 2. HAPUS SEMUA DATA
+            localStorage.clear();
+
+            // 3. SIMPAN KEMBALI DATA YANG DIPERLUKAN
+            if(dataAkunSementara) {
+                localStorage.setItem('dataAkun', JSON.stringify(dataAkunSementara));
+            }
+            if(dataLoginSementara) { // <<< TAMBAH INI
+                localStorage.setItem('dataLogin', JSON.stringify(dataLoginSementara));
+            }
+
+            alert("✅ BERHASIL!\nData sudah bersih.\nUsername & Password tetap aman.");
+            
+            // 4. PINDAH KE BERANDA
+            window.location.href = "Beranda.html";
+        }
+    }
+
+</script>
+       
+</body>
+</html>

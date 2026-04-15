@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Pengeluaran / Beban</title>
+    <style>
+        /* Reset & Global Style */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #25a18e 0%, #4cc9f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        .site-header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .site-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .site-logo span {
+            color: #ffd166;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        /* TOMBOL KEMBALI KE BERANDA */
+        .btn-home {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #2985db;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+            z-index: 999;
+        }
+        .btn-home:hover {
+            background-color: #ff3838;
+        }
+
+        /* Container Utama */
+        .container {
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 0 15px;
+            width: 100%;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        /* Judul */
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 25px;
+            font-size: clamp(22px, 5vw, 28px);
+            font-weight: bold;
+        }
+
+        /* Section Form */
+        .form-container {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .form-title {
+            font-size: clamp(18px, 4vw, 22px);
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+
+        .form-info {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .form-info p {
+            margin: 0;
+            font-size: clamp(14px, 3vw, 16px);
+            color: #495057;
+        }
+
+        .form-info input {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: clamp(14px, 3vw, 16px);
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            margin-top: 5px;
+        }
+
+        /* Tombol */
+        .btn-group {
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: clamp(14px, 3vw, 16px);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit {
+            background-color: #007bff;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-hitung {
+            background-color: #25a18e;
+        }
+        .btn-hitung:hover {
+            background-color: #1e8777;
+        }
+
+        /* Tabel */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(12px, 3vw, 15px);
+            display: table;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            word-break: break-word;
+        }
+
+        th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        td input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: clamp(12px, 3vw, 15px);
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+
+        .total-row input {
+            font-weight: bold;
+            background-color: #fff;
+            border: none;
+            text-align: right;
+        }
+
+        /* Catatan */
+        .note {
+            margin-top: 20px;
+            font-style: italic;
+            color: #6c757d;
+            font-size: clamp(13px, 3vw, 15px);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Website -->
+    <header class="site-header">
+        <div class="site-logo">Si <span>Labaku</span></div>
+    </header>
+    <!-- LINK KEMBALI KE BERANDA -->
+    <a href="Beranda.html" class="btn-home">🏠Beranda</a>
+
+    <div class="container">
+        <h2>Form Input Pengeluaran / Beban</h2>
+
+        <div class="form-container">
+            <div class="form-title">Data Pengeluaran</div>
+            
+            <div class="form-info">
+                <p>
+                    <label>Periode</label><br>
+                    <input type="date" id="periode">
+                </p>
+                <p>
+                    <label>Uraian</label><br>
+                    <input type="text" id="uraian" placeholder="Masukkan nama beban">
+                </p>
+                <p>
+                    <label>Kuantitas</label><br>
+                    <input type="number" id="kuantitas" min="0" placeholder="Masukkan jumlah">
+                </p>
+                <p>
+                    <label>Nominal / Unit</label><br>
+                    <input type="number" id="nominal" min="0" placeholder="Masukkan harga">
+                </p>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-submit" onclick="simpanData()">Submit</button>
+                <button class="btn-hitung" onclick="hitungTotal()">Hitung Total</button>
+                <!-- >>> TOMBOL BARU UNTUK PINDAH <<< -->
+                <button class="btn-hitung" onclick="simpanDanPindah()">Lihat Perhitungan Laba</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="tabelData">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Uraian</th>
+                            <th>Kuantitas</th>
+                            <th>Nominal / Unit</th>
+                            <th>Jumlah Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    <!-- BARIS AKAN MUNCUL OTOMATIS DISINI -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="4" style="text-align:right;">TOTAL</td>
+                            <td>Rp <input type="text" id="grandTotal" readonly></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            
+        </div>
+    </div>
+
+<script>
+    // Fungsi format Rupiah
+    function formatRupiah(angka) {
+        if (!angka || angka === 0) return "0";
+        var numberString = angka.toString(),
+        sisa = numberString.length % 3,
+        rupiah = numberString.substr(0, sisa),
+        ribuan = numberString.substr(sisa).match(/\d{3}/g);
+        
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+        return rupiah;
+    }
+
+    // Fungsi Submit / Masukkan data ke tabel
+    function simpanData() {
+        // Ambil nilai dari input atas
+        var tanggal = document.getElementById('periode').value;
+        var uraian = document.getElementById('uraian').value;
+        var qty = document.getElementById('kuantitas').value;
+        var nominal = document.getElementById('nominal').value;
+
+        // Validasi sederhana
+        if(tanggal == "" || uraian == "" || nominal == "") {
+            alert("Mohon isi semua data terlebih dahulu!");
+            return;
+        }
+
+        // Ambil tbody
+        var tbody = document.querySelector('#tabelData tbody');
+        
+        // Buat BARIS BARU otomatis
+        var baris = document.createElement('tr');
+        
+        // Isi konten baris baru
+        baris.innerHTML = `
+            <td class="tgl">${tanggal}</td>
+            <td class="uraian">${uraian}</td>
+            <td class="qty">${qty}</td>
+            <td class="harga">${nominal}</td>
+            <td class="total"><input type="text" readonly></td>
+        `;
+        
+        // Masukkan baris baru ke dalam tabel
+        tbody.appendChild(baris);
+
+        // Kosongkan input setelah disubmit
+        document.getElementById('uraian').value = "";
+        document.getElementById('kuantitas').value = "";
+        document.getElementById('nominal').value = "";
+    }
+
+    // Fungsi hitung total
+    function hitungTotal() {
+        let totalKeseluruhan = 0;
+        const rows = document.querySelectorAll('#tabelData tbody tr');
+
+        rows.forEach(row => {
+            const qty = parseFloat(row.querySelector('.qty').textContent) || 0;
+            const harga = parseFloat(row.querySelector('.harga').textContent) || 0;
+
+            const subTotal = qty * harga;
+
+            row.querySelector('.total input').value = formatRupiah(subTotal);
+
+            totalKeseluruhan += subTotal;
+        });
+
+        // Tampilkan Grand Total
+        document.getElementById('grandTotal').value = formatRupiah(totalKeseluruhan);
+    }
+
+    // >>>> FUNGSI: SIMPAN TOTAL BEBAN & PINDAH KE HALAMAN LABA <<<<
+    function simpanDanPindah() {
+        // Ambil angka total dari input Grand Total
+        let totalBeban = parseFloat(document.getElementById('grandTotal').value.replace(/\./g, '')) || 0;
+
+        // Simpan ke memori browser (localStorage)
+        localStorage.setItem('totalBeban', totalBeban);
+
+        // Pindah halaman ke Perhitungan Laba
+        window.location.href = "laba.html"; 
+    }
+</script>
+
+</body>
+</html>

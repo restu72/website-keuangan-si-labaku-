@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Persediaan</title>
+    <style>
+    /* Reset & Global Style */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #25a18e 0%, #4cc9f0 100%);
+        min-height: 100vh;
+        padding: 15px;
+        position: relative;
+    }
+    .site-header {
+        max-width: 900px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 0;
+    }
+    .site-logo {
+        font-size: 26px;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .site-logo span {
+        color: #ffd166;
+    }
+
+    .btn-home {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: #1e80ca;
+        color: white;
+        padding: 8px 15px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: background-color 0.3s ease;
+        z-index: 999;
+    }
+    .btn-home:hover { background-color: #ff3838; }
+    
+    .container {
+        max-width: 100%;
+        margin: 15px auto;
+        padding: 0 10px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    h2 {
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 20px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+    .form-container {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    .form-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2d3436;
+    }
+    .form-info {
+        margin-bottom: 15px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+    .form-info p {
+        margin: 0;
+        font-size: 14px;
+        color: #495057;
+    }
+    .form-info input {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 14px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        margin-top: 5px;
+    }
+    .btn-group { margin-bottom: 15px; }
+    button {
+        padding: 8px 15px;
+        font-size: 14px;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-submit { background-color: #007bff; }
+    .btn-submit:hover { background-color: #0056b3; }
+    .btn-hitung { background-color: #25a18e; }
+    .btn-hitung:hover { background-color: #1e8777; }
+    .btn-pindah { background-color: #f7b801; }
+    .btn-pindah:hover { background-color: #d49d00; }
+
+    /* === STYLE TABEL BARU & RESPONSIF === */
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        margin-bottom: 15px;
+        -webkit-overflow-scrolling: touch;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        table-layout: auto;
+        min-width: 750px;
+    }
+    th, td {
+        padding: 10px 8px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    /* Atur lebar kolom biar pas dan tidak terpotong */
+    th:nth-child(1), td:nth-child(1) { min-width: 80px; }  /* Tanggal */
+    th:nth-child(2), td:nth-child(2) { min-width: 120px; } /* Nama Barang */
+    th:nth-child(3), td:nth-child(3) { min-width: 70px; }  /* Kuantitas */
+    th:nth-child(4), td:nth-child(4) { min-width: 80px; }  /* Harga Beli */
+    th:nth-child(5), td:nth-child(5) { min-width: 80px; }  /* Harga Jual */
+    th:nth-child(6), td:nth-child(6) { min-width: 110px; } /* Total Beli */
+    th:nth-child(7), td:nth-child(7) { min-width: 110px; } /* Total Jual */
+    th:nth-child(8), td:nth-child(8) { min-width: 60px; }  /* Aksi */
+
+    th {
+        background-color: #e9ecef;
+        font-weight: 600;
+        color: #495057;
+    }
+    tr:hover { background-color: #f1f3f5; }
+    td input {
+        width: 100%;
+        padding: 5px 6px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    /* === STYLE BARIS TOTAL === */
+    .total-row {
+        font-weight: bold;
+        background-color: #e9ecef;
+    }
+    .total-row td {
+        padding: 12px 10px;
+    }
+    .total-row input {
+        font-weight: bold;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        text-align: right;
+        padding: 6px;
+        font-size: 13px;
+        width: 110px;
+        display: inline-block;
+    }
+
+    /* === STYLE TOMBOL HAPUS === */
+    .btn-hapus {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    .btn-hapus:hover {
+        background-color: #c82333;
+    }
+</style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-logo">Si <span>Labaku</span></div>
+    </header>
+    <a href="Beranda.html" class="btn-home">🏠Beranda</a>
+
+    <div class="container">
+        <h2>Form Input Persediaan</h2>
+
+        <!-- BAGIAN PERSEDIAAN AWAL -->
+        <div class="form-container">
+            <div class="form-title">Data Persediaan Awal</div>
+            <div class="form-info">
+                <p>
+                    <label>Periode</label><br>
+                    <input type="date" id="periode">
+                </p>
+                <p>
+                    <label>Nama Barang</label><br>
+                    <input type="text" id="namaBarang" placeholder="Masukkan nama barang">
+                </p>
+                <p>
+                    <label>Kuantitas</label><br>
+                    <input type="number" id="kuantitas" min="0" placeholder="Masukkan jumlah">
+                </p>
+                <p>
+                    <label>Harga Beli / Unit</label><br>
+                    <input type="number" id="hargaBeli" min="0" placeholder="Masukkan harga beli">
+                </p>
+                <p>
+                    <label>Harga Jual / Unit</label><br>
+                    <input type="number" id="hargaJual" min="0" placeholder="Masukkan harga jual">
+                </p>
+            </div>
+            <div class="btn-group">
+                <button class="btn-submit" onclick="simpanDataAwal()">Submit</button>
+                <button class="btn-hitung" onclick="hitungTotalAwal()">Hitung Total</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="tabelAwal">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Nama Barang</th>
+                            <th>Kuantitas</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            <th>Total Nilai Beli</th>
+                            <th>Total Nilai Jual</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyAwal"></tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="5" style="text-align:right; font-weight:bold;">TOTAL HARGA BELI</td>
+                            <td style="text-align:left;">Rp <input type="text" id="totalHargaBeliAwal" readonly></td>
+                            <td style="text-align:right; font-weight:bold;">TOTAL HARGA JUAL</td>
+                            <td style="text-align:left;">Rp <input type="text" id="totalHargaJualAwal" readonly></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- BAGIAN PEMBELIAN -->
+        <div class="form-container">
+            <div class="form-title">Data Pembelian</div>
+            <div class="form-info">
+                <p>
+                    <label>Tanggal Beli</label><br>
+                    <input type="date" id="tglBeli">
+                </p>
+                <p>
+                    <label>Nama Barang</label><br>
+                    <input type="text" id="namaBeli" placeholder="Masukkan nama barang">
+                </p>
+                <p>
+                    <label>Kuantitas</label><br>
+                    <input type="number" id="jmlBeli" min="0" placeholder="Masukkan jumlah">
+                </p>
+                <p>
+                    <label>Harga Beli / Unit</label><br>
+                    <input type="number" id="hrgBeli" min="0" placeholder="Masukkan harga beli">
+                </p>
+                <p>
+                    <label>Harga Jual / Unit</label><br>
+                    <input type="number" id="hjBeli" min="0" placeholder="Masukkan harga jual">
+                </p>
+            </div>
+            <div class="btn-group">
+                <button class="btn-submit" onclick="simpanDataBeli()">Submit</button>
+                <button class="btn-hitung" onclick="hitungTotalBeli()">Hitung Total</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="tabelBeli">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Nama Barang</th>
+                            <th>Kuantitas</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            <th>Total Nilai Beli</th>
+                            <th>Total Nilai Jual</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyBeli"></tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="5" style="text-align:right; font-weight:bold;">TOTAL HARGA BELI</td>
+                            <td style="text-align:left;">Rp <input type="text" id="totalHargaBeliBeli" readonly></td>
+                            <td style="text-align:right; font-weight:bold;">TOTAL HARGA JUAL</td>
+                            <td style="text-align:left;">Rp <input type="text" id="totalHargaJualBeli" readonly></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- BAGIAN PERSEDIAAN AKHIR -->
+        <div class="form-container">
+            <div class="form-title">Data Persediaan Akhir</div>
+            <div class="form-info">
+                <p>
+                    <label>Tanggal</label><br>
+                    <input type="date" id="tglAkhir">
+                </p>
+                <p>
+                    <label>Nama Barang</label><br>
+                    <input type="text" id="namaAkhir" placeholder="Masukkan nama barang">
+                </p>
+                <p>
+                    <label>Kuantitas</label><br>
+                    <input type="number" id="jmlAkhir" min="0" placeholder="Masukkan jumlah">
+                </p>
+                <p>
+                    <label>Harga Beli / Unit</label><br>
+                    <input type="number" id="hbAkhir" min="0" placeholder="Masukkan harga beli">
+                </p>
+                <p>
+                    <label>Harga Jual / Unit</label><br>
+                    <input type="number" id="hjAkhir" min="0" placeholder="Masukkan harga jual">
+                </p>
+            </div>
+            <div class="btn-group">
+                <button class="btn-submit" onclick="simpanDataAkhir()">Submit</button>
+                <button class="btn-hitung" onclick="hitungTotalAkhir()">Hitung Total</button>
+                <button class="btn-hapus" onclick="hapusSemuaTabelAkhir()">🗑️ Hapus Semua</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="tabelAkhir">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Nama Barang</th>
+                            <th>Kuantitas</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            <th>Total Nilai Beli</th>
+                            <th>Total Nilai Jual</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="bodyAkhir"></tbody>
+<tfoot>
+<tr class="total-row">
+<td colspan="5" style="text-align:right; font-weight:bold;">TOTAL HARGA BELI</td>
+<td style="text-align:left;">Rp <input type="text" id="totalHargaBeliAkhir" readonly></td>
+<td style="text-align:right; font-weight:bold;">TOTAL HARGA JUAL</td>
+<td style="text-align:left;">Rp <input type="text" id="totalHargaJualAkhir" readonly></td>
+</tr>
+</tfoot>
+</table>
+</div>
+
+<!-- TOMBOL HITUNG HASIL AKHIR -->
+<div class="btn-group">
+<button class="btn-pindah" onclick="hitungDanTampilkanHasil()">Hitung Hasil Akhir</button>
+<button class="btn-hitung" onclick="simpanDanPindah()">Lihat Perhitungan Pendapatan</button>
+</div>
+
+</div>
+
+<!-- === BAGIAN TABEL HASIL AKHIR === -->
+<div class="form-container" id="containerHasil" style="display:none;">
+<div class="form-title">DATA PERSEDIAAN AWAL SELANJUTNYA</div>
+<div class="table-wrapper">
+<table id="tabelHasil">
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Nama Barang</th>
+<th>Kuantitas</th>
+<th>Harga Beli</th>
+<th>Harga Jual</th>
+<th>Total Nilai Beli</th>
+<th>Total Nilai Jual</th>
+<th>Aksi</th>
+</tr>
+</thead>
+<tbody id="bodyHasil"></tbody>
+<tfoot>
+<tr class="total-row">
+<td colspan="5" style="text-align:right; font-weight:bold;">TOTAL HARGA BELI</td>
+<td style="text-align:left;">Rp <input type="text" id="totalHargaBeliHasil" readonly></td>
+<td style="text-align:right; font-weight:bold;">TOTAL HARGA JUAL</td>
+<td style="text-align:left;">Rp <input type="text" id="totalHargaJualHasil" readonly></td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+
+</div>
+
+<script>
+
+    // Format Rupiah
+function formatRupiah(angka) {
+    if (!angka || angka === 0) return "0";
+    var numberString = angka.toString(),
+        sisa = numberString.length % 3,
+        rupiah = numberString.substr(0, sisa),
+        ribuan = numberString.substr(sisa).match(/\d{3}/g);
+
+    if (ribuan) {
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+    }
+    return rupiah;
+}
+
+// FUNGSI TAMBAH BARIS OTOMATIS
+function tambahBaris(tbodyId, classes) {
+    const tbody = document.getElementById(tbodyId);
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td class="${classes[0]}"></td>
+        <td class="${classes[1]}"></td>
+        <td class="${classes[2]}"></td>
+        <td class="${classes[3]}"></td>
+        <td class="${classes[4]}"></td>
+        <td class="${classes[5]}"></td>
+        <td class="${classes[6]}"></td>
+        <td><button class="btn-hapus" onclick="hapusBaris(this)">❌</button></td>
+    `;
+
+    tbody.appendChild(row);
+    return row;
+}
+
+// FUNGSI HAPUS BARIS
+function hapusBaris(btn) {
+    if(confirm("Yakin hapus data ini?")) {
+        btn.closest('tr').remove();
+    }
+}
+
+// FUNGSI HAPUS SEMUA DI TABEL AKHIR
+function hapusSemuaTabelAkhir() {
+    if(confirm("Yakin hapus SEMUA data di tabel Persediaan Akhir?")) {
+        document.getElementById('bodyAkhir').innerHTML = "";
+        document.getElementById('totalHargaBeliAkhir').value = "";
+        document.getElementById('totalHargaJualAkhir').value = "";
+    }
+}
+
+// SIMPAN DATA PERSEDIAAN AWAL
+function simpanDataAwal() {
+    var tanggal = document.getElementById('periode').value;
+    var nama = document.getElementById('namaBarang').value;
+    var qty = parseFloat(document.getElementById('kuantitas').value) || 0;
+    var hb = parseFloat(document.getElementById('hargaBeli').value) || 0;
+    var hj = parseFloat(document.getElementById('hargaJual').value) || 0;
+
+    if(tanggal == "" || nama == "" || qty == "" || hb == "" || hj == "") {
+        alert("Mohon isi semua data!");
+        return;
+    }
+
+    var totalNilaiBeli = qty * hb;
+    var totalNilaiJual = qty * hj;
+
+    var baris = tambahBaris('bodyAwal', ['tgl', 'nm', 'qty', 'hb', 'hj', 'total_nilai_beli', 'total_nilai_jual']);
+
+    baris.querySelector('.tgl').textContent = tanggal;
+    baris.querySelector('.nm').textContent = nama;
+    baris.querySelector('.qty').textContent = qty;
+    baris.querySelector('.hb').textContent = hb;
+    baris.querySelector('.hj').textContent = hj;
+    baris.querySelector('.total_nilai_beli').textContent = totalNilaiBeli;
+    baris.querySelector('.total_nilai_jual').textContent = totalNilaiJual;
+
+    document.getElementById('namaBarang').value = "";
+    document.getElementById('kuantitas').value = "";
+    document.getElementById('hargaBeli').value = "";
+    document.getElementById('hargaJual').value = "";
+}
+
+// HITUNG TOTAL PERSEDIAAN AWAL
+function hitungTotalAwal() {
+    let grandTotalBeli = 0;
+    let grandTotalJual = 0;
+    const rows = document.querySelectorAll('#tabelAwal tbody tr');
+
+    rows.forEach(row => {
+        const totalBeli = parseFloat(row.querySelector('.total_nilai_beli').textContent) || 0;
+        const totalJual = parseFloat(row.querySelector('.total_nilai_jual').textContent) || 0;
+        grandTotalBeli += totalBeli;
+        grandTotalJual += totalJual;
+    });
+
+    document.getElementById('totalHargaBeliAwal').value = formatRupiah(grandTotalBeli);
+    document.getElementById('totalHargaJualAwal').value = formatRupiah(grandTotalJual);
+}
+
+// SIMPAN DATA PEMBELIAN
+function simpanDataBeli() {
+    var tanggal = document.getElementById('tglBeli').value;
+    var nama = document.getElementById('namaBeli').value;
+    var qty = parseFloat(document.getElementById('jmlBeli').value) || 0;
+    var hb = parseFloat(document.getElementById('hrgBeli').value) || 0;
+    var hj = parseFloat(document.getElementById('hjBeli').value) || 0;
+
+    if(tanggal == "" || nama == "" || qty == "" || hb == "" || hj == "") {
+        alert("Mohon isi semua data!");
+        return;
+    }
+
+    var totalNilaiBeli = qty * hb;
+    var totalNilaiJual = qty * hj;
+
+    var baris = tambahBaris('bodyBeli', ['tgl_beli', 'nm_beli', 'qty_beli', 'hb_beli', 'hj_beli', 'total_nilai_beli_beli', 'total_nilai_jual_beli']);
+
+    baris.querySelector('.tgl_beli').textContent = tanggal;
+    baris.querySelector('.nm_beli').textContent = nama;
+    baris.querySelector('.qty_beli').textContent = qty;
+    baris.querySelector('.hb_beli').textContent = hb;
+    baris.querySelector('.hj_beli').textContent = hj;
+    baris.querySelector('.total_nilai_beli_beli').textContent = totalNilaiBeli;
+    baris.querySelector('.total_nilai_jual_beli').textContent = totalNilaiJual;
+
+    document.getElementById('namaBeli').value = "";
+    document.getElementById('jmlBeli').value = "";
+    document.getElementById('hrgBeli').value = "";
+    document.getElementById('hjBeli').value = "";
+}
+
+// HITUNG TOTAL PEMBELIAN
+function hitungTotalBeli() {
+    let grandTotalBeli = 0;
+    let grandTotalJual = 0;
+    const rows = document.querySelectorAll('#tabelBeli tbody tr');
+
+    rows.forEach(row => {
+        const totalBeli = parseFloat(row.querySelector('.total_nilai_beli_beli').textContent) || 0;
+        const totalJual = parseFloat(row.querySelector('.total_nilai_jual_beli').textContent) || 0;
+        grandTotalBeli += totalBeli;
+        grandTotalJual += totalJual;
+    });
+
+    document.getElementById('totalHargaBeliBeli').value = formatRupiah(grandTotalBeli);
+    document.getElementById('totalHargaJualBeli').value = formatRupiah(grandTotalJual);
+}
+
+// SIMPAN DATA PERSEDIAAN AKHIR
+function simpanDataAkhir() {
+    var tanggal = document.getElementById('tglAkhir').value;
+    var nama = document.getElementById('namaAkhir').value;
+    var qty = parseFloat(document.getElementById('jmlAkhir').value) || 0;
+    var hb = parseFloat(document.getElementById('hbAkhir').value) || 0;
+    var hj = parseFloat(document.getElementById('hjAkhir').value) || 0;
+
+    if(tanggal == "" || nama == "" || qty == "" || hb == "" || hj == "") {
+        alert("Mohon isi semua data!");
+        return;
+    }
+
+    var totalNilaiBeli = qty * hb;
+    var totalNilaiJual = qty * hj;
+
+    var baris = tambahBaris('bodyAkhir', ['tgl_akhir', 'nm_akhir', 'qty_akhir', 'hb_akhir', 'hj_akhir', 'total_nilai_beli_akhir', 'total_nilai_jual_akhir']);
+
+    baris.querySelector('.tgl_akhir').textContent = tanggal;
+    baris.querySelector('.nm_akhir').textContent = nama;
+    baris.querySelector('.qty_akhir').textContent = qty;
+    baris.querySelector('.hb_akhir').textContent = hb;
+    baris.querySelector('.hj_akhir').textContent = hj;
+    baris.querySelector('.total_nilai_beli_akhir').textContent = totalNilaiBeli;
+    baris.querySelector('.total_nilai_jual_akhir').textContent = totalNilaiJual;
+
+    document.getElementById('namaAkhir').value = "";
+    document.getElementById('jmlAkhir').value = "";
+    document.getElementById('hbAkhir').value = "";
+    document.getElementById('hjAkhir').value = "";
+}
+
+// HITUNG TOTAL PERSEDIAAN AKHIR
+function hitungTotalAkhir() {
+    let grandTotalBeli = 0;
+    let grandTotalJual = 0;
+    const rows = document.querySelectorAll('#tabelAkhir tbody tr');
+
+    rows.forEach(row => {
+        const totalBeli = parseFloat(row.querySelector('.total_nilai_beli_akhir').textContent) || 0;
+        const totalJual = parseFloat(row.querySelector('.total_nilai_jual_akhir').textContent) || 0;
+        grandTotalBeli += totalBeli;
+        grandTotalJual += totalJual;
+    });
+
+    document.getElementById('totalHargaBeliAkhir').value = formatRupiah(grandTotalBeli);
+    document.getElementById('totalHargaJualAkhir').value = formatRupiah(grandTotalJual);
+}
+
+// === FUNGSI HITUNG & TAMPILKAN HASIL AKHIR ===
+function hitungDanTampilkanHasil() {
+    const rowsAkhir = document.querySelectorAll('#tabelAkhir tbody tr');
+
+    if(rowsAkhir.length === 0) {
+        alert("⚠️ Data Persediaan Akhir masih kosong!");
+        return;
+    }
+
+    document.getElementById('bodyHasil').innerHTML = "";
+    let totalBeliHasil = 0;
+    let totalJualHasil = 0;
+
+    rowsAkhir.forEach(row => {
+        let tgl = row.querySelector('.tgl_akhir').textContent;
+        let nm = row.querySelector('.nm_akhir').textContent;
+        let qty = row.querySelector('.qty_akhir').textContent;
+        let hb = row.querySelector('.hb_akhir').textContent;
+        let hj = row.querySelector('.hj_akhir').textContent;
+        let totalBeli = row.querySelector('.total_nilai_beli_akhir').textContent;
+        let totalJual = row.querySelector('.total_nilai_jual_akhir').textContent;
+
+        let baris = tambahBaris('bodyHasil', ['tgl_hsl', 'nm_hsl', 'qty_hsl', 'hb_hsl', 'hj_hsl', 'total_beli_hsl', 'total_jual_hsl']);
+
+        baris.querySelector('.tgl_hsl').textContent = tgl;
+        baris.querySelector('.nm_hsl').textContent = nm;
+        baris.querySelector('.qty_hsl').textContent = qty;
+        baris.querySelector('.hb_hsl').textContent = hb;
+        baris.querySelector('.hj_hsl').textContent = hj;
+        baris.querySelector('.total_beli_hsl').textContent = totalBeli;
+        baris.querySelector('.total_jual_hsl').textContent = totalJual;
+
+        totalBeliHasil += parseFloat(totalBeli) || 0;
+        totalJualHasil += parseFloat(totalJual) || 0;
+    });
+
+    document.getElementById('totalHargaBeliHasil').value = formatRupiah(totalBeliHasil);
+    document.getElementById('totalHargaJualHasil').value = formatRupiah(totalJualHasil);
+    document.getElementById('containerHasil').style.display = "block";
+
+    alert("✅ Data siap disimpan!");
+}
+
+    // SIMPAN & PINDAH HALAMAN (VERSION LENGKAP - SUDAH DIPERBAIKI)
+function simpanDanPindah() {
+    // === 1. AMBIL DATA AWAL YANG ASLI ===
+    let dataAwalAsli = [];
+    document.querySelectorAll('#tabelAwal tbody tr').forEach(row => {
+        dataAwalAsli.push({
+            tgl: row.querySelector('.tgl').textContent,
+            nm: row.querySelector('.nm').textContent,
+            qty: row.querySelector('.qty').textContent,
+            hb: row.querySelector('.hb').textContent,
+            hj: row.querySelector('.hj').textContent,
+            totalBeli: parseFloat(row.querySelector('.total_nilai_beli').textContent) || 0,
+            totalJual: parseFloat(row.querySelector('.total_nilai_jual').textContent) || 0
+        });
+    });
+
+    // === 2. AMBIL DATA PEMBELIAN ===
+    let dataBeli = [];
+    document.querySelectorAll('#tabelBeli tbody tr').forEach(row => {
+        dataBeli.push({
+            tgl: row.querySelector('.tgl_beli').textContent,
+            nm: row.querySelector('.nm_beli').textContent,
+            qty: row.querySelector('.qty_beli').textContent,
+            hb: row.querySelector('.hb_beli').textContent,
+            hj: row.querySelector('.hj_beli').textContent,
+            totalBeli: parseFloat(row.querySelector('.total_nilai_beli_beli').textContent) || 0,
+            totalJual: parseFloat(row.querySelector('.total_nilai_jual_beli').textContent) || 0
+        });
+    });
+
+    // === 3. AMBIL DATA AKHIR ===
+    let dataAkhir = [];
+    document.querySelectorAll('#tabelAkhir tbody tr').forEach(row => {
+        dataAkhir.push({
+            tgl: row.querySelector('.tgl_akhir').textContent,
+            nm: row.querySelector('.nm_akhir').textContent,
+            qty: row.querySelector('.qty_akhir').textContent,
+            hb: row.querySelector('.hb_akhir').textContent,
+            hj: row.querySelector('.hj_akhir').textContent,
+            totalBeli: parseFloat(row.querySelector('.total_nilai_beli_akhir').textContent) || 0,
+            totalJual: parseFloat(row.querySelector('.total_nilai_jual_akhir').textContent) || 0
+        });
+    });
+    
+    // === 4. SIMPAN DATA BUAT BULAN DEPAN ===
+    let dataAwalBaru = [];
+    document.querySelectorAll('#tabelHasil tbody tr').forEach(row => {
+        dataAwalBaru.push({
+            tgl: row.querySelector('.tgl_hsl').textContent,
+            nm: row.querySelector('.nm_hsl').textContent,
+            qty: row.querySelector('.qty_hsl').textContent,
+            hb: row.querySelector('.hb_hsl').textContent || 0,
+            hj: row.querySelector('.hj_hsl').textContent,
+            totalBeli: parseFloat(row.querySelector('.total_beli_hsl').textContent) || 0,
+            totalJual: parseFloat(row.querySelector('.total_jual_hsl').textContent) || 0
+        });
+    });
+
+    // === SIMPAN KE LOCALSTORAGE ===
+    localStorage.setItem('dataAwal', JSON.stringify(dataAwalAsli));
+    localStorage.setItem('dataAwalBaru', JSON.stringify(dataAwalBaru));
+    localStorage.setItem('dataBeli', JSON.stringify(dataBeli));
+    localStorage.setItem('dataAkhir', JSON.stringify(dataAkhir));
+
+    alert("✅ Data berhasil disimpan!");
+    window.location.href = "perhitungan.html";
+}
+
+// >>>> MEMUAT DATA AWAL DARI SISA PERIODE SEBELUMNYA <<<<
+function muatDataAwalDariSisa() {
+    const dataSisa = JSON.parse(localStorage.getItem('dataAwalBaru')) || [];
+
+    if(dataSisa.length > 0) {
+        let tbodyAwal = document.getElementById('bodyAwal');
+        tbodyAwal.innerHTML = "";
+
+        dataSisa.forEach(item => {
+            let baris = tambahBaris('bodyAwal', ['tgl', 'nm', 'qty', 'hb', 'hj', 'total_nilai_beli', 'total_nilai_jual']);
+
+            let bulanTahun = item.tgl ? item.tgl.substring(0, 7) : new Date().toISOString().split('T')[0].substring(0, 7);
+            baris.querySelector('.tgl').textContent = bulanTahun + "-01";
+            baris.querySelector('.nm').textContent = item.nm;
+            baris.querySelector('.qty').textContent = item.qty;
+            baris.querySelector('.hb').textContent = item.hb || 0;
+            baris.querySelector('.hj').textContent = item.hj;
+            baris.querySelector('.total_nilai_beli').textContent = item.totalBeli || 0;
+            baris.querySelector('.total_nilai_jual').textContent = item.totalJual || 0;
+        });
+
+        hitungTotalAwal();
+     }
+ }
+ // Jalankan otomatis pas halaman dibuka
+ window.onload = function() {
+     muatDataAwalDariSisa();
+ };
+ </script>
+ </body>
+ </html>
+ 

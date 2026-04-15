@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Laba Rugi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #25a18e 0%, #4cc9f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .site-header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .site-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .site-logo span {
+            color: #ffd166;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #333; /* Garis pinggir kotak utama */
+        }
+
+        /* JUDUL UTAMA */
+        .judul-laporan {
+            text-align: center;
+            font-size: clamp(22px, 5vw, 26px);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* NAMA UMKM & TANGGAL */
+        .nama-umkm {
+            text-align: center;
+            font-size: clamp(18px, 4vw, 22px);
+            margin-bottom: 5px;
+        }
+        .tanggal-laporan {
+            text-align: center;
+            font-size: clamp(16px, 3vw, 18px);
+            margin-bottom: 20px;
+        }
+
+        /* ALAMAT & NO TELP SEJAJAR */
+        .info-baris {
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 8px 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            margin-bottom: 25px;
+        }
+
+        /* TABEL ISI */
+        .table-laporan {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+
+        .table-laporan td {
+            padding: 10px 12px;
+        }
+
+        .table-laporan td:first-child {
+            width: 70%;
+        }
+
+        .table-laporan td:last-child {
+            text-align: right;
+            font-weight: bold;
+            width: 30%;
+        }
+
+        .border-bottom {
+            border-bottom: 2px solid #333 !important;
+        }
+
+        .total-row {
+            font-weight: bold;
+        }
+
+        /* TOMBOL */
+        .btn-home {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #1e80ca;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: bold;
+        }
+        .btn-home:hover { 
+            background-color: #ff3838; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Website -->
+    <header class="site-header">
+        <div class="site-logo">Si <span>Labaku</span></div>
+    </header>
+<div class="container">
+    <a href="Beranda.html" class="btn-home">🏠Beranda</a>
+    
+    <!-- >>> TOMBOL DOWNLOAD BARU <<< -->
+    <button onclick="downloadPDF()" style="background-color: #28a745; margin-left: 10px;">📄 Download PDF</button>
+    <!-- JUDUL LAPORAN -->
+    <div class="judul-laporan">Laporan Laba Rugi</div>
+
+    <!-- NAMA UMKM & TANGGAL -->
+    <div class="nama-umkm" id="namaUmkm">(Nama UMKM)</div>
+    <div class="tanggal-laporan" id="tanggalLaporan">(tanggal akhir Bulan)</div>
+
+    <!-- ALAMAT & NO TELP -->
+    <div class="info-baris">
+        <div><strong>Alamat:</strong> <span id="alamatUmkm">...</span></div>
+        <div><strong>No. Telepon:</strong> <span id="telpUmkm">...</span></div>
+    </div>
+
+    <!-- TABEL PERHITUNGAN -->
+    <table class="table-laporan">
+        <tr>
+            <td>Penjualan</td>
+            <td id="valPenjualan">Rp 0</td>
+        </tr>
+        <tr>
+            <td>HPP</td>
+            <td id="valHPP" class="border-bottom">Rp 0</td>
+        </tr>
+        <tr class="total-row">
+            <td>Laba Kotor</td>
+            <td id="valLabaKotor">Rp 0</td>
+        </tr>
+        <tr>
+            <td>Beban</td>
+            <td id="valBeban" class="border-bottom">Rp 0</td>
+        </tr>
+        <tr class="total-row">
+            <td id="labelHasil"> Laba / Rugi</td>
+            <td id="valLabaBersih">Rp 0</td>
+        </tr>
+    </table>
+
+</div>
+
+<script>
+    // Format Rupiah
+    function formatRupiah(angka) {
+        return "Rp " + angka.toLocaleString('id-ID');
+    }
+
+    // Fungsi utama
+    function tampilkanSemuaData() {
+        // === 1. AMBIL DATA DARI AKUN ===
+        let dataAkun = JSON.parse(localStorage.getItem('dataAkun'));
+        if(dataAkun) {
+            document.getElementById('namaUmkm').textContent = dataAkun.nama || '(Nama UMKM)';
+            document.getElementById('alamatUmkm').textContent = dataAkun.alamat || '...';
+            document.getElementById('telpUmkm').textContent = dataAkun.telp || '...';
+            
+            // Format tanggal
+            if(dataAkun.tanggal) {
+                let tgl = new Date(dataAkun.tanggal);
+                let formatted = tgl.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                document.getElementById('tanggalLaporan').textContent = formatted;
+            } else {
+                document.getElementById('tanggalLaporan').textContent = '(tanggal akhir Bulan)';
+            }
+        }
+
+        // === 2. AMBIL DATA PERHITUNGAN ===
+        const totalPenjualan = parseFloat(localStorage.getItem('totalPenjualan')) || 0;
+        const totalHPP = parseFloat(localStorage.getItem('totalHPP')) || 0;
+        const labaKotor = parseFloat(localStorage.getItem('labaKotor')) || 0;
+        const totalBeban = parseFloat(localStorage.getItem('totalBeban')) || 0;
+        const labaBersih = parseFloat(localStorage.getItem('labaBersih')) || 0;
+
+        document.getElementById('valPenjualan').textContent = formatRupiah(totalPenjualan);
+        document.getElementById('valHPP').textContent = formatRupiah(totalHPP);
+        document.getElementById('valLabaKotor').textContent = formatRupiah(labaKotor);
+        document.getElementById('valBeban').textContent = formatRupiah(totalBeban);
+        document.getElementById('valLabaBersih').textContent = formatRupiah(labaBersih);
+        
+        // >>> UBAH TULISAN OTOMATIS <<<
+        const labelHasil = document.getElementById('labelHasil');
+        if(labaBersih >= 0) {
+            labelHasil.textContent = "Laba";
+        } else {
+            labelHasil.textContent = "Rugi";
+        }
+    }
+
+    // Jalankan saat halaman dibuka
+    window.onload = tampilkanSemuaData;
+
+    // >>>> FUNGSI DOWNLOAD PDF (SUDAH DIPERBAIKI) <<<<
+    function downloadPDF() {
+    // 1. Sembunyikan tombol dulu sementara
+    const btnHome = document.querySelector('.btn-home');
+    const btnDownload = document.querySelector('button[onclick="downloadPDF()"]');
+    if(btnHome) btnHome.style.display = 'none';
+    if(btnDownload) btnDownload.style.display = 'none';
+
+    alert("Sedang membuat PDF, mohon tunggu...");
+
+    // 2. Ambil tampilan yang sudah bersih
+    const element = document.querySelector('.container');
+    
+    html2canvas(element, {
+        scale: 2,
+        useCORS: true
+    }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const imgWidth = pdf.internal.pageSize.getWidth();
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        
+        // 3. Download filenya
+        pdf.save('Laporan_Laba_Rugi_' + new Date().toISOString().slice(0,10) + '.pdf');
+
+        // 4. Tampilkan tombol lagi seperti semula
+        if(btnHome) btnHome.style.display = 'inline-block';
+        if(btnDownload) btnDownload.style.display = 'inline-block';
+    });
+}
+
+// >>>> FUNGSI PINDAH HASIL AKHIR JADI AWAL BARU <<<<
+function pindahHasilJadiAwal() {
+    // Ambil data dari localStorage (data yang disimpan dari tabel hasil)
+    let dataHasil = JSON.parse(localStorage.getItem('dataAwalBaru')) || [];
+    
+    if(dataHasil.length > 0) {
+        // Simpan ulang jadi dataAwal
+        localStorage.setItem('dataAwal', JSON.stringify(dataHasil));
+        
+        // Ambil totalnya juga
+        let totalBeli = localStorage.getItem('totalBeliBaru');
+        let totalJual = localStorage.getItem('totalJualBaru');
+        localStorage.setItem('totalBeliAwal', totalBeli);
+        localStorage.setItem('totalJualAwal', totalJual);
+
+        console.log("Sisa barang otomatis jadi Persediaan Awal baru.");
+    }
+}
+
+// Jalankan otomatis pas halaman dibuka
+window.onload = function() {
+    tampilkanSemuaData(); // Yang udah ada
+    pindahHasilJadiAwal(); // Tambahin ini
+};
+
+</script>
+
+<!-- LIBRARY UNTUK PDF (WAJIB ADA INI) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</body>
+</html>

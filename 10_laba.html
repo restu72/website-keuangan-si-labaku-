@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perhitungan Laba Kotor & Laba Bersih</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #25a18e 0%, #4cc9f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .site-header {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+        }
+        .site-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .site-logo span {
+            color: #ffd166;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: clamp(20px, 4vw, 26px);
+        }
+
+        /* BAGIAN TABEL PERHITUNGAN UTAMA */
+        .table-main {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: clamp(14px, 2.5vw, 16px);
+        }
+
+        .table-main td {
+            padding: 10px 12px;
+        }
+
+        .table-main td:first-child {
+            font-weight: bold;
+            width: 60%;
+        }
+
+        .table-main td:last-child {
+            text-align: right;
+            font-weight: bold;
+            width: 40%;
+        }
+
+        /* STYLE GARIS BAWAH SEPERTI EXCEL */
+        .border-bottom {
+            border-bottom: 2px solid #333;
+        }
+
+        .total-row {
+            font-weight: bold;
+        }
+
+        /* TOMBOL */
+        .btn-home {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #1e80ca;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .btn-home:hover { 
+            background-color: #ff3838; 
+        }
+
+        .note-red {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: clamp(12px, 2.5vw, 14px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Website -->
+    <header class="site-header">
+        <div class="site-logo">Si <span>Labaku</span></div>
+    </header>
+<div class="container">
+    <a href="Beranda.html" class="btn-home">🏠Beranda</a>
+
+    <h2>Perhitungan Laba Kotor & Laba Bersih</h2>
+
+    <!-- TABEL PERHITUNGAN -->
+    <table class="table-main">
+        <tr>
+            <td>Total Penjualan</td>
+            <td id="valPenjualan">Rp 0</td>
+        </tr>
+        <tr>
+            <td>HPP</td>
+            <td id="valHPP" class="border-bottom">Rp 0</td>
+        </tr>
+        <tr class="total-row">
+            <td>Laba Kotor</td>
+            <td id="valLabaKotor">Rp 0</td>
+        </tr>
+        <tr>
+            <td>Beban</td>
+            <td id="valBeban" class="border-bottom">Rp 0</td>
+        </tr>
+        <tr class="total-row">
+            <td>Laba Bersih</td>
+            <td id="valLabaBersih">Rp 0</td>
+        </tr>
+    </table>
+
+    <!-- >>> TOMBOL DI BAWAH TABEL <<< -->
+    <div style="text-align: center; margin-top: 25px;">
+        <a href="laporan_laba_rugi.html" class="btn-home" style="background-color: #28a745;">📊 Menuju Laporan Laba Rugi</a>
+    </div>
+
+</div>
+    
+
+<script>
+    // Format Rupiah
+    function formatRupiah(angka) {
+        if (!angka || angka === 0) return "Rp 0";
+        return "Rp " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Fungsi utama memuat dan menghitung semua data
+    function muatDataDanHitung() {
+        // 1. AMBIL DATA DARI LOCALSTORAGE
+        const dataAwal = JSON.parse(localStorage.getItem('dataAwal')) || [];
+        const dataBeli = JSON.parse(localStorage.getItem('dataBeli')) || [];
+        const dataAkhir = JSON.parse(localStorage.getItem('dataAkhir')) || [];
+
+        // === HITUNG TOTAL UNTUK PENJUALAN (PAKAI HARGA JUAL) ===
+        let totalJualAwal = 0;
+        let totalJualBeli = 0;
+        let totalJualAkhir = 0;
+
+        dataAwal.forEach(item => { totalJualAwal += parseFloat(item.totalJual) || 0; });
+        dataBeli.forEach(item => { totalJualBeli += parseFloat(item.totalJual) || 0; });
+        dataAkhir.forEach(item => { totalJualAkhir += parseFloat(item.totalJual) || 0; });
+
+        // === HITUNG TOTAL UNTUK HPP (PAKAI HARGA BELI) ===
+        let totalBeliAwal = 0;
+        let totalBeliBeli = 0;
+        let totalBeliAkhir = 0;
+
+        dataAwal.forEach(item => { totalBeliAwal += parseFloat(item.totalBeli) || 0; });
+        dataBeli.forEach(item => { totalBeliBeli += parseFloat(item.totalBeli) || 0; });
+        dataAkhir.forEach(item => { totalBeliAkhir += parseFloat(item.totalBeli) || 0; });
+
+        // 2. HITUNG TOTAL PENJUALAN
+        let totalPenjualan = totalJualAwal + totalJualBeli - totalJualAkhir;
+        document.getElementById('valPenjualan').textContent = formatRupiah(totalPenjualan);
+
+        // 3. HITUNG HPP
+        let hpp = totalBeliAwal + totalBeliBeli - totalBeliAkhir;
+        document.getElementById('valHPP').textContent = formatRupiah(hpp);
+
+        // 4. HITUNG LABA KOTOR (Penjualan - HPP)
+        let labaKotor = totalPenjualan - hpp;
+        document.getElementById('valLabaKotor').textContent = formatRupiah(labaKotor);
+
+        // 5. AMBIL DATA BEBAN
+        const totalBeban = parseFloat(localStorage.getItem('totalBeban')) || 0;
+        document.getElementById('valBeban').textContent = formatRupiah(totalBeban);
+
+        // 6. HITUNG LABA BERSIH (Laba Kotor - Beban)
+        let labaBersih = labaKotor - totalBeban;
+        document.getElementById('valLabaBersih').textContent = formatRupiah(labaBersih);
+
+        // SIMPAN SEMUA HASIL
+        localStorage.setItem('totalPenjualan', totalPenjualan);
+        localStorage.setItem('totalHPP', hpp);
+        localStorage.setItem('labaKotor', labaKotor);
+        localStorage.setItem('totalBeban', totalBeban);
+        localStorage.setItem('labaBersih', labaBersih);
+        
+        // >>> SIMPAN KHUSUS UNTUK GRAFIK BERANDA <<<
+        const bulanSekarang = new Date().getMonth();
+        const namaBulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        localStorage.setItem('laba_' + namaBulan[bulanSekarang], labaBersih);
+    }
+
+    // Jalankan fungsi saat halaman dibuka
+    window.onload = muatDataDanHitung;
+</script>
+
+</body>
+</html>
